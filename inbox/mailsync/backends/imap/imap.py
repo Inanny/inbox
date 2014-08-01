@@ -97,7 +97,6 @@ from inbox.mailsync.backends.base import (save_folder_names,
                                           MailsyncDone)
 from inbox.mailsync.backends.base import BaseMailSyncMonitor
 
-
 IDLE_FOLDERS = ['inbox', 'sent mail']
 
 

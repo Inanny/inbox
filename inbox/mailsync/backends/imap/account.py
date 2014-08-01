@@ -23,6 +23,8 @@ from inbox.models.backends.imap import (ImapUid, ImapFolderInfo, ImapThread,
 from inbox.log import get_logger
 log = get_logger()
 
+from inbox.util.debug import profile
+
 
 def total_stored_data(account_id, session):
     """
@@ -79,6 +81,7 @@ def g_metadata(account_id, session, folder_name):
                  for uid, g_msgid, g_thrid in query])
 
 
+@profile
 def update_thread_labels(thread, folder_name, g_labels, db_session):
     """ Make sure `thread` has all the right labels. """
     existing_labels = {folder.name.lower() for folder in thread.folders
@@ -133,6 +136,7 @@ def update_thread_labels(thread, folder_name, g_labels, db_session):
     return new_labels
 
 
+@profile
 def update_metadata(account_id, session, folder_name, uids, new_flags):
     """ Update flags (the only metadata that can change).
 
@@ -156,6 +160,7 @@ def update_metadata(account_id, session, folder_name, uids, new_flags):
         item.message.is_read = item.is_seen
 
 
+@profile
 def remove_messages(account_id, session, uids, folder):
     """ Make sure you're holding a db write lock on the account. (We don't try
         to grab the lock in here in case the caller needs to put higher-level
@@ -178,6 +183,7 @@ def remove_messages(account_id, session, uids, folder):
     # longer contain any messages.
 
 
+@profile
 def get_folder_info(account_id, session, folder_name):
     try:
         # using .one() here may catch duplication bugs
@@ -198,6 +204,7 @@ def uidvalidity_valid(account_id, selected_uidvalidity, folder_name,
         return selected_uidvalidity >= cached_uidvalidity
 
 
+@profile
 def update_folder_info(account_id, session, folder_name, uidvalidity,
                        highestmodseq):
     cached_folder_info = get_folder_info(account_id, session, folder_name)
@@ -211,6 +218,7 @@ def update_folder_info(account_id, session, folder_name, uidvalidity,
     session.add(cached_folder_info)
 
 
+@profile
 def create_imap_message(db_session, log, account, folder, msg):
     """ IMAP-specific message creation logic.
 
