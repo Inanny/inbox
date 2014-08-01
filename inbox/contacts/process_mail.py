@@ -6,6 +6,8 @@ from inbox.contacts import search_util
 from inbox.models import Contact, MessageContactAssociation
 from inbox.util.addr import canonicalize_address
 
+from inbox.util.debug import profile
+
 SIGNAL_NAME_MAPPING = {
     'to_addr': 'to_count',
     'from_addr': 'from_count',
@@ -14,6 +16,7 @@ SIGNAL_NAME_MAPPING = {
 }
 
 
+@profile
 def update_contacts(db_session, account_id, message):
     """Add new contacts from the given message's to/from/cc fields, and update
     ranking scores for all contacts in those fields."""

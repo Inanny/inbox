@@ -34,6 +34,10 @@ def profile(func):
         profiler.start()
         r = func(*args, **kwargs)
         profiler.stop()
-        print profiler.output_text(color=True)
+
+        #print profiler.output_text(color=True)
+
+        with open('perf.out', 'a+') as f:
+            f.write(profiler.output_text(color=True))
         return r
     return wrapper
