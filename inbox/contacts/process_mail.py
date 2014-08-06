@@ -16,7 +16,7 @@ SIGNAL_NAME_MAPPING = {
 }
 
 
-@profile
+#@profile
 def update_contacts(db_session, account_id, message):
     """Add new contacts from the given message's to/from/cc fields, and update
     ranking scores for all contacts in those fields."""
