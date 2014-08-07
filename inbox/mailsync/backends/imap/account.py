@@ -23,7 +23,7 @@ from inbox.models.backends.imap import (ImapUid, ImapFolderInfo, ImapThread,
 from inbox.log import get_logger
 log = get_logger()
 
-from inbox.util.debug import profile
+from inbox.util.debug import profile, cprofile
 
 
 def total_stored_data(account_id, session):
@@ -53,12 +53,14 @@ def num_uids(account_id, session, folder_name):
         Folder.name == folder_name).count()
 
 
+@cprofile
 def all_uids(account_id, session, folder_name):
     return [uid for uid, in session.query(ImapUid.msg_uid).join(Folder).filter(
         ImapUid.account_id == account_id,
         Folder.name == folder_name)]
 
 
+@cprofile
 def g_msgids(account_id, session, in_=None):
     # Easiest way to account-filter Messages is to namespace-filter from
     # the associated thread. (Messages may not necessarily have associated
@@ -71,6 +73,7 @@ def g_msgids(account_id, session, in_=None):
     return sorted([g_msgid for g_msgid, in query if g_msgid in in_])
 
 
+@cprofile
 def g_metadata(account_id, session, folder_name):
     query = session.query(ImapUid.msg_uid, Message.g_msgid, Message.g_thrid)\
         .filter(ImapUid.account_id == account_id,
@@ -81,7 +84,7 @@ def g_metadata(account_id, session, folder_name):
                  for uid, g_msgid, g_thrid in query])
 
 
-#@profile
+@cprofile
 def update_thread_labels(thread, folder_name, g_labels, db_session):
     """ Make sure `thread` has all the right labels. """
     folders = thread.folders
@@ -137,7 +140,7 @@ def update_thread_labels(thread, folder_name, g_labels, db_session):
     return new_labels
 
 
-#@profile
+#@cprofile
 def update_metadata(account_id, session, folder_name, uids, new_flags):
     """ Update flags (the only metadata that can change).
 
@@ -161,7 +164,7 @@ def update_metadata(account_id, session, folder_name, uids, new_flags):
         item.message.is_read = item.is_seen
 
 
-#@profile
+#@cprofile
 def remove_messages(account_id, session, uids, folder):
     """ Make sure you're holding a db write lock on the account. (We don't try
         to grab the lock in here in case the caller needs to put higher-level
@@ -184,7 +187,7 @@ def remove_messages(account_id, session, uids, folder):
     # longer contain any messages.
 
 
-#@profile
+#@cprofile
 def get_folder_info(account_id, session, folder_name):
     try:
         # using .one() here may catch duplication bugs
@@ -205,7 +208,7 @@ def uidvalidity_valid(account_id, selected_uidvalidity, folder_name,
         return selected_uidvalidity >= cached_uidvalidity
 
 
-#@profile
+#@cprofile
 def update_folder_info(account_id, session, folder_name, uidvalidity,
                        highestmodseq):
     cached_folder_info = get_folder_info(account_id, session, folder_name)
@@ -219,7 +222,7 @@ def update_folder_info(account_id, session, folder_name, uidvalidity,
     session.add(cached_folder_info)
 
 
-#@profile
+#@cprofile
 def create_imap_message(db_session, log, account, folder, msg):
     """ IMAP-specific message creation logic.
 
