@@ -60,7 +60,6 @@ def cprofile(func):
         ps.dump_stats(filename)
 
         print s.getvalue()
-
         return r
     return wrapper
 

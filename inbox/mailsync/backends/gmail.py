@@ -54,8 +54,8 @@ from inbox.mailsync.backends.imap import (account, uidvalidity_cb,
                                           add_uids_to_stack, check_new_uids,
                                           uid_list_to_stack, report_progress,
                                           ImapSyncMonitor, update_uid_counts)
+from inbox.util.debug import profile
 
-#from inbox.util.debug import profile
 
 PROVIDER = 'gmail'
 SYNC_MONITOR_CLS = 'GmailSyncMonitor'

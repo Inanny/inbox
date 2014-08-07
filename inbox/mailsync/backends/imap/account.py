@@ -23,7 +23,7 @@ from inbox.models.backends.imap import (ImapUid, ImapFolderInfo, ImapThread,
 from inbox.log import get_logger
 log = get_logger()
 
-from inbox.util.debug import profile, cprofile
+from inbox.util.debug import profile
 
 
 def total_stored_data(account_id, session):
